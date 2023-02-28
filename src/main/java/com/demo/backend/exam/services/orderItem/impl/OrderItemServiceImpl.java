@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import com.demo.backend.exam.dto.OrderItemDTO;
 import com.demo.backend.exam.models.OrderItem;
 import com.demo.backend.exam.repository.OrderItemRepository;
-import com.demo.backend.exam.services.orderItem.OrderItemServices;
+import com.demo.backend.exam.services.orderItem.OrderItemService;
 
 @Service
-public class OrderItemServicesImpl implements OrderItemServices {
+public class OrderItemServiceImpl implements OrderItemService {
 
     @Autowired
     private ModelMapper modelMapper;

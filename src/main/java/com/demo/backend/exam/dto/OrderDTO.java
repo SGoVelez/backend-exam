@@ -6,7 +6,6 @@ import com.demo.backend.exam.enums.PaymentMethod;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +15,8 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class OrderDTO {
 
@@ -35,7 +34,7 @@ public class OrderDTO {
 
     private Long addressId;
 
-    private List<CartItemDTO> productIds;
+    private List<CartItemDTO> products;
 
     private List<OrderItemDTO> orderItems;
 

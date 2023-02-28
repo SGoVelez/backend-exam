@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.backend.exam.dto.ProductDTO;
-import com.demo.backend.exam.services.product.ProductServices;
+import com.demo.backend.exam.services.product.ProductService;
 import com.demo.backend.exam.utilities.Constants;
 
 @RestController
@@ -25,7 +25,7 @@ import com.demo.backend.exam.utilities.Constants;
 public class ProductController {
 
     @Autowired
-    private ProductServices productServices;
+    private ProductService productServices;
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts(

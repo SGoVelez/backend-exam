@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.demo.backend.exam.dto.AddressDTO;
 
-public interface AddressServices {
+public interface AddressService {
 
     public List<AddressDTO> getAllAddresses();
 

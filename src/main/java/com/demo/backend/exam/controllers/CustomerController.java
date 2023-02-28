@@ -11,38 +11,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.backend.exam.dto.CustomerDTO;
-import com.demo.backend.exam.services.customer.CustomerServices;
+import com.demo.backend.exam.services.customer.CustomerService;
 
 @RestController
+@RequestMapping("/customers")
 public class CustomerController {
 
     @Autowired
-    private CustomerServices customerServices;
+    private CustomerService customerServices;
 
-    @GetMapping("/customers")
+    @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         return new ResponseEntity<List<CustomerDTO>>(customerServices.getAllCustomers(), HttpStatus.OK);
     }
 
-    @GetMapping("/customers/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
         return new ResponseEntity<CustomerDTO>(customerServices.getCustomerById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/customers")
+    @PostMapping
     public ResponseEntity<CustomerDTO> addCustomer(@RequestBody CustomerDTO customer) {
         return new ResponseEntity<CustomerDTO>(customerServices.addCustomer(customer), HttpStatus.CREATED);
     }
 
-    @PutMapping("/customers/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customer) {
         return new ResponseEntity<CustomerDTO>(customerServices.updateCustomer(id, customer), HttpStatus.OK);
     }
 
-    @DeleteMapping("/customers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
         customerServices.deleteCustomer(id);
         return new ResponseEntity<String>("Customer deleted successfully", HttpStatus.OK);

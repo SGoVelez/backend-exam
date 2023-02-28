@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.demo.backend.exam.dto.CustomerDTO;
 
-public interface CustomerServices {
+public interface CustomerService {
 
     public List<CustomerDTO> getAllCustomers();
 

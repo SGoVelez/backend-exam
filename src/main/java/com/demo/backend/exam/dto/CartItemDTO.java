@@ -13,12 +13,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class CartItemDTO {
 
-    private Long productId;
+    private Long id;
 
     private Integer quantity;
-
-    private Double price;
-
-    private String productName;
 
 }

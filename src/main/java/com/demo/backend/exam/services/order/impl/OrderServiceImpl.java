@@ -73,13 +73,11 @@ public class OrderServiceImpl implements OrderService {
             for (OrderItem orderItem : order.getOrderItems()) {
                 System.out.println("ORDER PRODUCT:" + orderItem.getProduct());
                 CartItemDTO cartItemDTO = new CartItemDTO();
-                cartItemDTO.setProductId(orderItem.getProduct().getId());
+                cartItemDTO.setId(orderItem.getProduct().getId());
                 cartItemDTO.setQuantity(orderItem.getQuantity());
-                cartItemDTO.setPrice(orderItem.getPrice());
-                cartItemDTO.setProductName(orderItem.getProduct().getName());
                 cartItemsDTO.add(cartItemDTO);
             }
-            orderDTO.setProductIds(cartItemsDTO);
+            orderDTO.setProducts(cartItemsDTO);
             ordersDTO.add(orderDTO);
         }
 
@@ -105,26 +103,26 @@ public class OrderServiceImpl implements OrderService {
         temporalOrder.setCustomer(customer);
         temporalOrder.setShippingAddress(shippingAddress);
         temporalOrder.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        temporalOrder.setTotal(0.0);
 
         Order temporalOrderSaved = orderRepository.save(temporalOrder);
-
+        System.out.println("Temporal Order saved: " + temporalOrderSaved);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         Double orderTotal = 0.0;
 
-        for (CartItemDTO cartItemDTO : orderDTO.getProductIds()) {
-            Product product = productRepository.findById(cartItemDTO.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Product", "id", cartItemDTO.getProductId()));
+        for (CartItemDTO cartItemDTO : orderDTO.getProducts()) {
+            Product product = productRepository.findById(cartItemDTO.getId())
+                    .orElseThrow(() -> new NotFoundException("Product", "id", cartItemDTO.getId()));
 
             // OrderItem to save
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(temporalOrderSaved);
             orderItem.setProduct(product);
             orderItem.setQuantity(cartItemDTO.getQuantity());
-            orderItem.setPrice(cartItemDTO.getQuantity() * product.getPrice());
             orderItemRepository.save(orderItem);
 
             // Add OrderItem to Order. Increase order total
-            orderTotal += orderItem.getPrice();
+            orderTotal += cartItemDTO.getQuantity() * product.getPrice();
             orderItems.add(orderItem);
         }
 
@@ -147,13 +145,11 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem orderItem : orderSaved.getOrderItems()) {
             CartItemDTO cartItemDTO = new CartItemDTO();
-            cartItemDTO.setProductId(orderItem.getProduct().getId());
+            cartItemDTO.setId(orderItem.getProduct().getId());
             cartItemDTO.setQuantity(orderItem.getQuantity());
-            cartItemDTO.setPrice(orderItem.getPrice());
-            cartItemDTO.setProductName(orderItem.getProduct().getName());
             cartItemsDTO.add(cartItemDTO);
         }
-        resultOrderDTO.setProductIds(cartItemsDTO);
+        resultOrderDTO.setProducts(cartItemsDTO);
 
         return resultOrderDTO;
 
@@ -182,10 +178,11 @@ public class OrderServiceImpl implements OrderService {
         // Update OrderItems and total
         Double orderTotal = orderToUpdate.getTotal();
         List<OrderItem> orderItems = orderToUpdate.getOrderItems();
-
-        for (CartItemDTO cartItemDTO : orderDTO.getProductIds()) {
-            Product product = productRepository.findById(cartItemDTO.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Product", "id", cartItemDTO.getProductId()));
+        System.out.println("CART ITEMS:" + orderDTO.getProducts());
+        for (CartItemDTO cartItemDTO : orderDTO.getProducts()) {
+            System.out.println("CART ITEM:" + cartItemDTO);
+            Product product = productRepository.findById(cartItemDTO.getId())
+                    .orElseThrow(() -> new NotFoundException("Product", "id", cartItemDTO.getId()));
 
             if (cartItemDTO.getQuantity() == 0) {
                 // Delete OrderItem
@@ -193,11 +190,11 @@ public class OrderServiceImpl implements OrderService {
                         .findByOrderAndProduct(orderToUpdate, product);
 
                 if (orderItemToDelete == null) {
-                    throw new NotFoundException("OrderItem", "id", cartItemDTO.getProductId());
+                    throw new NotFoundException("OrderItem", "id", cartItemDTO.getId());
                 }
 
                 orderItemRepository.delete(orderItemToDelete);
-                orderTotal -= orderItemToDelete.getPrice();
+                orderTotal -= orderItemToDelete.getQuantity() * product.getPrice();
                 orderItems.remove(orderItemToDelete);
             } else {
                 // Update OrderItem
@@ -210,24 +207,22 @@ public class OrderServiceImpl implements OrderService {
                     orderItemToUpdate.setOrder(orderToUpdate);
                     orderItemToUpdate.setProduct(product);
                     orderItemToUpdate.setQuantity(cartItemDTO.getQuantity());
-                    orderItemToUpdate.setPrice(cartItemDTO.getQuantity() * product.getPrice());
                     orderItemRepository.save(orderItemToUpdate);
 
-                    orderTotal += orderItemToUpdate.getPrice();
+                    orderTotal += cartItemDTO.getQuantity() * product.getPrice();
                     orderItems.add(orderItemToUpdate);
                     continue;
 
                 }
 
                 // Decrese order total with old price to then increase with new price
-                orderTotal -= orderItemToUpdate.getPrice();
+                orderTotal -= orderItemToUpdate.getQuantity() * product.getPrice();
 
                 orderItemToUpdate.setQuantity(cartItemDTO.getQuantity());
-                orderItemToUpdate.setPrice(cartItemDTO.getQuantity() * product.getPrice());
                 orderItemRepository.save(orderItemToUpdate);
                 orderItems.add(orderItemToUpdate);
 
-                orderTotal += orderItemToUpdate.getPrice();
+                orderTotal += cartItemDTO.getQuantity() * product.getPrice();
                 orderItems.add(orderItemToUpdate);
             }
         }
@@ -250,13 +245,11 @@ public class OrderServiceImpl implements OrderService {
         List<CartItemDTO> cartItemsDTO = new ArrayList<CartItemDTO>();
         for (OrderItem orderItem : orderUpdated.getOrderItems()) {
             CartItemDTO cartItemDTO = new CartItemDTO();
-            cartItemDTO.setProductId(orderItem.getProduct().getId());
+            cartItemDTO.setId(orderItem.getProduct().getId());
             cartItemDTO.setQuantity(orderItem.getQuantity());
-            cartItemDTO.setPrice(orderItem.getPrice());
-            cartItemDTO.setProductName(orderItem.getProduct().getName());
             cartItemsDTO.add(cartItemDTO);
         }
-        resultOrderDTO.setProductIds(cartItemsDTO);
+        resultOrderDTO.setProducts(cartItemsDTO);
 
         return resultOrderDTO;
     }

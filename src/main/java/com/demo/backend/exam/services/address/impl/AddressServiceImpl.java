@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.demo.backend.exam.repository.AddressRepository;
-import com.demo.backend.exam.services.address.AddressServices;
+import com.demo.backend.exam.services.address.AddressService;
 import com.demo.backend.exam.dto.AddressDTO;
 import com.demo.backend.exam.exceptions.NotFoundException;
 import com.demo.backend.exam.models.Address;
 
 @Service
-public class AddressServicesImpl implements AddressServices {
+public class AddressServiceImpl implements AddressService {
 
     @Autowired
     private ModelMapper modelMapper;

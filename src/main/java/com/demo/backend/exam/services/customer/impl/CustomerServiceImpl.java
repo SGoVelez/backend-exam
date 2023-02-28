@@ -1,6 +1,8 @@
 package com.demo.backend.exam.services.customer.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,12 @@ import com.demo.backend.exam.exceptions.NotFoundException;
 import com.demo.backend.exam.models.Customer;
 import com.demo.backend.exam.repository.CustomerRepository;
 import com.demo.backend.exam.repository.OrderRepository;
-import com.demo.backend.exam.services.customer.CustomerServices;
+import com.demo.backend.exam.services.customer.CustomerService;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class CustomerServicesImpl implements CustomerServices {
+public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -31,7 +33,20 @@ public class CustomerServicesImpl implements CustomerServices {
     public List<CustomerDTO> getAllCustomers() {
         List<Customer> customerList = customerRepository.findAll();
 
-        return customerList.stream().map(customer -> modelMapper.map(customer, CustomerDTO.class)).toList();
+        List<CustomerDTO> customerDTOList = new ArrayList<>();
+
+        for (Customer customer : customerList) {
+            CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO.setId(customer.getId());
+            customerDTO.setName(customer.getName());
+            customerDTO.setPhoneNumber(customer.getPhoneNumber());
+            customerDTO.setEmail(customer.getEmail());
+            customerDTO.setAddresses(customer.getAddresses());
+            // customerDTO.setOrders(customer.getOrders());
+            customerDTOList.add(customerDTO);
+        }
+
+        return customerDTOList;
     }
 
     @Override
@@ -39,7 +54,15 @@ public class CustomerServicesImpl implements CustomerServices {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Customer", "id", id));
 
-        return modelMapper.map(customer, CustomerDTO.class);
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(customer.getId());
+        customerDTO.setName(customer.getName());
+        customerDTO.setPhoneNumber(customer.getPhoneNumber());
+        customerDTO.setEmail(customer.getEmail());
+        customerDTO.setAddresses(customer.getAddresses());
+        // customerDTO.setOrders(customer.getOrders());
+
+        return customerDTO;
     }
 
     @Override

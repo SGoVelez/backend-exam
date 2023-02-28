@@ -10,11 +10,8 @@ public class BackendExamApplication {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		// Skip null values when mapping
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration().setSkipNullEnabled(true);
 
-		return modelMapper;
+		return new ModelMapper();
 	}
 
 	public static void main(String[] args) {

@@ -16,11 +16,11 @@ import com.demo.backend.exam.models.OrderItem;
 import com.demo.backend.exam.models.Product;
 import com.demo.backend.exam.repository.OrderItemRepository;
 import com.demo.backend.exam.repository.ProductRepository;
-import com.demo.backend.exam.services.product.ProductServices;
+import com.demo.backend.exam.services.product.ProductService;
 import com.demo.backend.exam.exceptions.NotFoundException;
 
 @Service
-public class ProductServicesImpl implements ProductServices {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -93,8 +93,8 @@ public class ProductServicesImpl implements ProductServices {
 
         List<OrderItem> orderItems = orderItemRepository.findByProduct(productToDelete);
 
-        if (orderItems != null) {
-            // trow 409 conflict
+        if (!orderItems.isEmpty()) {
+            // todo: throw 409 conflict
             throw new RuntimeException("Product is already in an order");
         }
 

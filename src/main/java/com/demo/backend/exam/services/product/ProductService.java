@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.demo.backend.exam.dto.ProductDTO;
 
-public interface ProductServices {
+public interface ProductService {
 
     public List<ProductDTO> getAllProducts(Integer page, Integer pageSize, String sortBy, String sortDirection);
 
