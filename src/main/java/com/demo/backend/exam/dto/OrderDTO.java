@@ -3,7 +3,6 @@ package com.demo.backend.exam.dto;
 import java.util.List;
 
 import com.demo.backend.exam.enums.PaymentMethod;
-import com.demo.backend.exam.models.OrderItem;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 

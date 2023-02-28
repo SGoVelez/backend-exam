@@ -9,12 +9,10 @@ import lombok.Getter;
 import com.demo.backend.exam.models.Order;
 import com.demo.backend.exam.models.Product;
 
-import lombok.AccessLevel;
-
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class OrderItemDTO {
 
