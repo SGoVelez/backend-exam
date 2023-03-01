@@ -36,6 +36,4 @@ public class OrderDTO {
 
     private List<CartItemDTO> products;
 
-    private List<OrderItemDTO> orderItems;
-
 }

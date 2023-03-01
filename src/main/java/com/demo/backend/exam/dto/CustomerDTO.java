@@ -26,8 +26,8 @@ public class CustomerDTO {
 
     private String email;
 
-    private List<Address> addresses;
+    private List<AddressDTO> addresses;
 
-    private List<Order> orders;
+    private List<OrderDTO> orders;
 
 }

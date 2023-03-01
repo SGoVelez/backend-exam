@@ -8,14 +8,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.demo.backend.exam.dto.AddressDTO;
 import com.demo.backend.exam.dto.CustomerDTO;
+import com.demo.backend.exam.dto.OrderDTO;
 import com.demo.backend.exam.exceptions.NotFoundException;
+import com.demo.backend.exam.models.Address;
 import com.demo.backend.exam.models.Customer;
 import com.demo.backend.exam.repository.CustomerRepository;
 import com.demo.backend.exam.repository.OrderRepository;
 import com.demo.backend.exam.services.customer.CustomerService;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -41,8 +44,32 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTO.setName(customer.getName());
             customerDTO.setPhoneNumber(customer.getPhoneNumber());
             customerDTO.setEmail(customer.getEmail());
-            customerDTO.setAddresses(customer.getAddresses());
-            // customerDTO.setOrders(customer.getOrders());
+
+            List<AddressDTO> addressDTOList = customer.getAddresses().stream().map(address -> {
+                AddressDTO addressDTO = new AddressDTO();
+                addressDTO.setId(address.getId());
+                addressDTO.setStreet(address.getStreet());
+                addressDTO.setNumber(address.getNumber());
+                addressDTO.setCity(address.getCity());
+                addressDTO.setState(address.getState());
+                addressDTO.setCountry(address.getCountry());
+                addressDTO.setZipCode(address.getZipCode());
+                return addressDTO;
+            }).collect(Collectors.toList());
+
+            List<OrderDTO> orderDTOList = customer.getOrders().stream().map(order -> {
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO.setId(order.getId());
+                orderDTO.setOrderNumber(order.getOrderNumber());
+                orderDTO.setDate(order.getDate());
+                orderDTO.setPaymentType(order.getPaymentType());
+                orderDTO.setTotal(order.getTotal());
+                return orderDTO;
+            }).collect(Collectors.toList());
+
+            customerDTO.setAddresses(addressDTOList);
+            customerDTO.setOrders(orderDTOList);
+
             customerDTOList.add(customerDTO);
         }
 
@@ -59,8 +86,31 @@ public class CustomerServiceImpl implements CustomerService {
         customerDTO.setName(customer.getName());
         customerDTO.setPhoneNumber(customer.getPhoneNumber());
         customerDTO.setEmail(customer.getEmail());
-        customerDTO.setAddresses(customer.getAddresses());
-        // customerDTO.setOrders(customer.getOrders());
+
+        List<AddressDTO> addressDTOList = customer.getAddresses().stream().map(address -> {
+            AddressDTO addressDTO = new AddressDTO();
+            addressDTO.setId(address.getId());
+            addressDTO.setStreet(address.getStreet());
+            addressDTO.setNumber(address.getNumber());
+            addressDTO.setCity(address.getCity());
+            addressDTO.setState(address.getState());
+            addressDTO.setCountry(address.getCountry());
+            addressDTO.setZipCode(address.getZipCode());
+            return addressDTO;
+        }).collect(Collectors.toList());
+
+        List<OrderDTO> orderDTOList = customer.getOrders().stream().map(order -> {
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setId(order.getId());
+            orderDTO.setOrderNumber(order.getOrderNumber());
+            orderDTO.setDate(order.getDate());
+            orderDTO.setPaymentType(order.getPaymentType());
+            orderDTO.setTotal(order.getTotal());
+            return orderDTO;
+        }).collect(Collectors.toList());
+
+        customerDTO.setAddresses(addressDTOList);
+        customerDTO.setOrders(orderDTOList);
 
         return customerDTO;
     }
@@ -83,11 +133,24 @@ public class CustomerServiceImpl implements CustomerService {
         customerToUpdate.setName(customer.getName());
         customerToUpdate.setPhoneNumber(customer.getPhoneNumber());
         customerToUpdate.setEmail(customer.getEmail());
-        customerToUpdate.setAddresses(customer.getAddresses());
+        customerToUpdate
+                .setAddresses(customer.getAddresses().stream().map(address -> modelMapper.map(address, Address.class))
+                        .collect(Collectors.toList()));
 
         Customer updatedCustomer = customerRepository.save(customerToUpdate);
 
-        return modelMapper.map(updatedCustomer, CustomerDTO.class);
+        CustomerDTO responseCustomerDTO = new CustomerDTO();
+        responseCustomerDTO.setId(updatedCustomer.getId());
+        responseCustomerDTO.setName(updatedCustomer.getName());
+        responseCustomerDTO.setPhoneNumber(updatedCustomer.getPhoneNumber());
+        responseCustomerDTO.setEmail(updatedCustomer.getEmail());
+
+        List<AddressDTO> addressDTOList = updatedCustomer.getAddresses().stream()
+                .map(address -> modelMapper.map(address, AddressDTO.class)).collect(Collectors.toList());
+
+        responseCustomerDTO.setAddresses(addressDTOList);
+
+        return responseCustomerDTO;
     }
 
     @Override
