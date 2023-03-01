@@ -90,8 +90,8 @@ public class OrderServiceImpl implements OrderService {
         throw new UnsupportedOperationException("Unimplemented method 'getOrderById'");
     }
 
-    @Transactional
     @Override
+    @Transactional
     public OrderDTO addOrder(OrderDTO orderDTO) {
         // Save a temporal Order
         Order temporalOrder = modelMapper.map(orderDTO, Order.class);
@@ -105,8 +105,7 @@ public class OrderServiceImpl implements OrderService {
         temporalOrder.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         temporalOrder.setTotal(0.0);
 
-        Order temporalOrderSaved = orderRepository.save(temporalOrder);
-        System.out.println("Temporal Order saved: " + temporalOrderSaved);
+        System.out.println("Temporal Order saved: " + temporalOrder);
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         Double orderTotal = 0.0;
 
@@ -116,10 +115,9 @@ public class OrderServiceImpl implements OrderService {
 
             // OrderItem to save
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(temporalOrderSaved);
+            orderItem.setOrder(temporalOrder);
             orderItem.setProduct(product);
             orderItem.setQuantity(cartItemDTO.getQuantity());
-            orderItemRepository.save(orderItem);
 
             // Add OrderItem to Order. Increase order total
             orderTotal += cartItemDTO.getQuantity() * product.getPrice();
@@ -127,23 +125,23 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // Update temporal Order with OrderItems and total
-        temporalOrderSaved.setTotal(orderTotal);
-        temporalOrderSaved.setOrderItems(orderItems);
-        Order orderSaved = orderRepository.save(temporalOrderSaved);
+        temporalOrder.setTotal(orderTotal);
+        temporalOrder.setOrderItems(orderItems);
+        orderRepository.save(temporalOrder);
 
-        // OrdrDTO to return
+        // OrderDTO to return
         OrderDTO resultOrderDTO = new OrderDTO();
-        resultOrderDTO.setId(orderSaved.getId());
-        resultOrderDTO.setOrderNumber(orderSaved.getOrderNumber());
-        resultOrderDTO.setDate(orderSaved.getDate());
-        resultOrderDTO.setPaymentType(orderSaved.getPaymentType());
-        resultOrderDTO.setTotal(orderSaved.getTotal());
-        resultOrderDTO.setCustomerId(orderSaved.getCustomer().getId());
-        resultOrderDTO.setAddressId(orderSaved.getShippingAddress().getId());
+        resultOrderDTO.setId(temporalOrder.getId());
+        resultOrderDTO.setOrderNumber(temporalOrder.getOrderNumber());
+        resultOrderDTO.setDate(temporalOrder.getDate());
+        resultOrderDTO.setPaymentType(temporalOrder.getPaymentType());
+        resultOrderDTO.setTotal(temporalOrder.getTotal());
+        resultOrderDTO.setCustomerId(temporalOrder.getCustomer().getId());
+        resultOrderDTO.setAddressId(temporalOrder.getShippingAddress().getId());
 
         List<CartItemDTO> cartItemsDTO = new ArrayList<CartItemDTO>();
 
-        for (OrderItem orderItem : orderSaved.getOrderItems()) {
+        for (OrderItem orderItem : temporalOrder.getOrderItems()) {
             CartItemDTO cartItemDTO = new CartItemDTO();
             cartItemDTO.setId(orderItem.getProduct().getId());
             cartItemDTO.setQuantity(orderItem.getQuantity());
